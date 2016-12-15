@@ -1,6 +1,12 @@
 /**
  * Created by eric on 1/16/16.
  */
+ $(window).load(function() {
+	$(".loader").fadeOut("slow");
+	setTimeout(function(){
+   CalValidate();
+ },5000);
+})
 $(function () {
     /*hide calender first*/
     $('#agentCombo').combobox({disabled:true});
@@ -52,7 +58,7 @@ $(function () {
                                                 msg:d.msg,
                                                 icon:'info',
                                                 modal:true,
-                                                timeout:5000,
+                                                timeout:500,
                                                 showType:'fade',
                                                 style:{
                                                     right:'',
@@ -60,24 +66,24 @@ $(function () {
                                                     bottom:''
                                                 }
                                             });
-                                            $('#dataGrid').datagrid('reload');
-                                            $(location).attr('href','/leave')
+											
+                                           $('#calender').calendar({validator:CalValidate});
+										   $('#dataGrid').datagrid('reload');
                                         }
                                         else if(d.status=='Error'){
                                             $.messager.progress('close');
+											console.log(d);
                                             $.messager.alert({
                                                 title:d.status,
                                                 msg:d.msg,
                                                 icon:'error',
-                                                timeout:5000,
+                                                timeout:500,
                                                 showType:'fade'
                                             });
                                         }
                                     })
-                                }else{
-                                    $.messager.progress('close');
-                                    return false
                                 }
+								else{ $.messager.progress('close');}
                             });
                             return false;
                         }
@@ -97,7 +103,7 @@ function CancelLeave() {
        var m = now.getMonth()+1;
        var d = now.getDate();
 	   var user_id=$('#leaveFrm').find('input[name="agent"]').val();
-	   console.log(user_id);
+	 
        var z= y+'-'+(m<10?('0'+m):m)+'-'+(d<10?('0'+d):d);
        if (row.date <= z){
            $('.c3').linkbutton('disable');
@@ -136,13 +142,13 @@ function CancelLeave() {
                        var f = JSON.parse(data);
                        $.messager.progress('close');
                        if (f.status == 'success') {
-                           $('#dataGrid').datagrid('reload');
-                           $(location).attr('href','/leave')
+                      	$('#calender').calendar({validator:CalValidate});	
+						$('#dataGrid').datagrid('reload');													
                            $.messager.show({
                                title: f.status,
                                msg: f.msg,
                                modal:true,
-                               timeout: 5000,
+                               timeout: 500,
                                showType: 'slide',
                                style:{
                                    right:'',
@@ -155,7 +161,7 @@ function CancelLeave() {
                            $.messager.alert({
                                title: f.status,
                                msg: f.msg,
-                               timeout: 5000,
+                               timeout: 500,
                                showType: 'fade'
                            });
                        }

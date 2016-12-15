@@ -242,6 +242,8 @@
 								op: opts.defaultFilterOperator,
 								value: value
 							});
+							
+							$(target)[name]('reload');
 							$(target)[name]('doFilter');
 						}
 					} else {

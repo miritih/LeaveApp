@@ -9,11 +9,15 @@ class LeaveController extends \BaseController {
 	 */
 	public function index()
 	{
-
+		if(Sentry::check()){
+        $user= Sentry::getUser();
+        $project=$user->project_ID;
+    }
         $leave=  DB::table('leave')
             ->join('users', 'leave.agent_ID', '=', 'users.agent_ID')
             ->join('Projects', 'users.project_ID', '=', 'Projects.Project_Name')
             ->select('leave.leave_ID','leave.date', 'leave.agent_ID', 'users.agent_Name','users.created_at','Projects.project_Name')
+			->where('project_Name','=',$project)
             ->orderBy('agent_Name', 'asc')
             ->get();
 
@@ -39,36 +43,55 @@ class LeaveController extends \BaseController {
             );
         }
         try {
+			 if(Sentry::check()){
+             $user= Sentry::getUser();
+            $project=$user->project_ID;
+			}
             $month=Input::get('qter');
             if($month<=3 && $month>=1){
                 $q=Leave::whereBetween('date', array('2016-01-01', '2016-03-31'))->where('agent_ID', '=',Input::get('agent'))->count();
-            }else if($month<=4 && $month>=6){
+            }else if($month<=6 && $month>=4){
                 $q=Leave::whereBetween('date', array('2016-04-01', '2016-06-30'))->where('agent_ID', '=',Input::get('agent'))->count();
-            }else if($month<=7 && $month>=9){
+            }else if($month<=9 && $month>=7){
                 $q=Leave::whereBetween('date', array('2016-07-01', '2016-09-30'))->where('agent_ID', '=',Input::get('agent'))->count();
-            }else if($month<=10 && $month>=12){
+            }else if($month<=12 && $month>=10){
                 $q=Leave::whereBetween('date', array('2016-10-01', '2016-12-31'))->where('agent_ID', '=',Input::get('agent'))->count();
             }
-            $fullyBooked = Leave::where('date', '=',Input::get('date'))->count();
+			$max_agents=DB::table('projects')
+            ->select('Projects.max_agents')
+			->where('project_Name','=',$project)->get();
+			
+            $fullyBooked = DB::table('leave')
+            ->join('users', 'leave.agent_ID', '=', 'users.agent_ID')
+            ->join('Projects', 'users.project_ID', '=', 'Projects.Project_Name')
+            ->select('leave.leave_ID','leave.date', 'leave.agent_ID', 'users.agent_Name','users.created_at','Projects.project_Name')
+			->where('date', '=',Input::get('date'))
+			->where('project_Name','=',$project)
+			->count();
             $agent=Leave::where('date', '=',Input::get('date'))->where('agent_ID', '=',Input::get('agent'))->count();
             $monthMax=Leave::where('date', 'like',Input::get('month').'%')->where('agent_ID', '=',Input::get('agent'))->count();
             $maxLeave=Leave::where('agent_ID', '=',Input::get('agent'))->count();
-            if($fullyBooked>=1){
+           
+				foreach ($max_agents as $max_a)
+				{
+					$max_agent=$max_a->max_agents;
+				}
+		   if($fullyBooked>=$max_agent){
                 $response = array(
                     'status' => 'Error',
-                    'msg' => 'Sorry!! This day is fully Booked..Please select another day'
+                    'msg' => 'Sorry!! This leave day is fully booked. Kindly select onother date to book.'
                 );
             }else if($agent>=1){
                 $response = array(
                     'status' => 'Error',
                     'msg' => 'You have already booked this day!!'
                 );
-            }else if($q>=5){
+            }else if($q>=21){
                 $response = array(
                     'status' => 'Error',
-                    'msg' => 'You\'re Not allowed to go for more than 5 days leave in three months.. please see your Team lead in case you want an extra leave for this quota'
+                    'msg' => 'Sorry! You have exhausted your leave days for this Year(21 max allowed)'
                 );
-            }else if($monthMax>=5){
+            }else if($monthMax>=21){
                 $response = array(
                     'status' => 'Error',
                     'msg' => 'Sorry! You can only take 5 leave days in a month!!'
@@ -166,7 +189,7 @@ class LeaveController extends \BaseController {
         if($del){
             $response=array(
                 'status' =>'success',
-                'msg'    =>'leave successfully Removed'
+                'msg'    =>'leave Day successfully Canceled!'
             );
         }
         else{

@@ -27,6 +27,9 @@
                 {{Form::close()}}
           </div>
   				<a class="btn btn-primary" href="add">Register</a>
+				<br>
+				<br>
+  				&nbsp <a class="" href="reset">Forgot Password?</a>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4"></div>
     </div>
@@ -34,6 +37,6 @@
     </div>
 {{HTML::script('assets/jquery.min.js')}}
 {{HTML::script('assets/jquery.easyui.min.js')}}
-{{HTML::script('assets/login.js')}}
+{{HTML::script('assets/login.min.js')}}
 </body>
 </html>

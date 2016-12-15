@@ -38,44 +38,17 @@ $('#leave-app').window({
     month = now.getMonth()+1;
     $('#calender').calendar({
         firstDay:1,
-        validator: function(date){
-            var condition
-            var g;
-               if(month<=3 && month>=1){
-                 condition =  date.getMonth()+1<1 || date.getMonth()+1>3;
-               }else if(month<=6 && month>=4){
-                condition =  date.getMonth()+1<4 || date.getMonth()+1>6;
-               }else if(month<=9 && month>=7){
-                condition =  date.getMonth()+1<7 || date.getMonth()+1>9;
-               }else if(month<=12 && month>=10){
-                condition =  date.getMonth()+1<10 || date.getMonth()+1>12;
-               }
-            //console.log(fullyBooked(date));
-            if (date.getDay()== 6||date.getDay()== 0||date.getFullYear()!=now.getFullYear()||date < now || condition||fullyBooked(date)>=1){
-                return false;
-            } else {
-                return true;
-            }
-        }
+        validator: CalValidate 
     });
-    function fullyBooked(date){
-       var dat='';
-        var yy = date.getFullYear();
-                  var mon = date.getMonth()+1;
-                  var day = date.getDate();
-                  var dateZ= yy+'-'+(mon<10?('0'+mon):mon)+'-'+(day<10?('0'+day):day);
-        $.ajax({
-                async: false,
-                type: "GET",
-                url: "date",
-                data: {date : dateZ },
-                dataType: "json",
-                success : function(data) {
-                              dat = data;
-                          }
-              });
-        return dat;
-    }
+	
+   
+  
+  /*function to relod Calender*/
+	function cal_refresh() {
+	$('#calender').calendar({validator:CalValidate});
+	setTimeout(cal_refresh, 15000); // schedule next refresh after 15sec
+  }
+  
     /*display Grid*/
     $('#dataGrid').datagrid({
         title:'Display Grid',
@@ -129,6 +102,8 @@ $('#leave-app').window({
 
             }
     });
+	 cal_refresh();
+	  
     function actionsFormat(value,row,index){
         var now=new Date();
         var y = now.getFullYear();
@@ -187,3 +162,5 @@ $('#leave-app').window({
        			});
     Adg.datagrid('enableFilter');
 		});
+		
+/*Functin to validate the calender*/	

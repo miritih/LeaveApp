@@ -22,7 +22,15 @@ Route::get('/', function()
         $email=$user->email;
         $name=$user->agent_Name;
         $project=$user->project_ID;
-        return View::make('home')->with('user',$email)->with('name',$name)->with('project',$project);
+		
+		 $max_agents=DB::table('projects')
+         ->select('Projects.max_agents')
+		->where('project_Name','=',$project)->get();
+			foreach ($max_agents as $max_a)
+				{
+					$max_agent=$max_a->max_agents;
+				}
+        return View::make('home')->with('user',$email)->with('name',$name)->with('project',$project)->with('max_agents',$max_agent);
     }
     return View::make("login")->with("title","Leave APP")->with('heading','LEAVE APP');
 });
@@ -35,6 +43,12 @@ Route::get('add', function()
 {
 	return View::make('create');
 });
+
+Route::get('reset', function()
+{
+	return View::make('reset');
+});
+
 Route::get('projects', function()
 {
 	return Project::all();
@@ -42,12 +56,17 @@ Route::get('projects', function()
 Route::get('excel', function()
 {
     DB::setFetchMode(PDO::FETCH_ASSOC);
-    $leave=  DB::table('leave')
-                ->join('users', 'leave.agent_ID', '=', 'users.agent_ID')
-                ->join('Projects', 'users.project_ID', '=', 'Projects.Project_Name')
-                ->select('leave.date', 'leave.agent_ID', 'users.agent_Name','Projects.project_Name')
-                ->orderBy('agent_Name', 'asc')
-                ->get();
+	if(Sentry::check()){
+        $user= Sentry::getUser();
+        $project=$user->project_ID;
+    }
+   $leave=  DB::table('leave')
+            ->join('users', 'leave.agent_ID', '=', 'users.agent_ID')
+            ->join('Projects', 'users.project_ID', '=', 'Projects.Project_Name')
+            ->select('leave.date', 'leave.agent_ID', 'users.agent_Name','Projects.project_Name')
+			->where('project_Name','=',$project)
+            ->orderBy('agent_Name', 'asc')
+            ->get();
     $mytime = Carbon\Carbon::now()->toDateTimeString();
     $myt="Leave Sheet(".$mytime.")";
 
@@ -73,10 +92,22 @@ Route::get('agents', function()
 });
 Route::get('date', function()
 {
-    $fullyBooked = Leave::where('date', '=',Input::get('date'))->count();
+	if(Sentry::check()){
+        $user= Sentry::getUser();
+        $project=$user->project_ID;
+    }
+	 $fullyBooked=DB::table('leave')
+            ->join('users', 'leave.agent_ID', '=', 'users.agent_ID')
+            ->join('Projects', 'users.project_ID', '=', 'Projects.Project_Name')
+            ->select('leave.leave_ID','leave.date', 'leave.agent_ID', 'users.agent_Name','users.created_at','Projects.project_Name','Projects.max_agents')
+			->where('date', '=',Input::get('date'))
+			->where('project_Name','=',$project)
+			->count();	
 	return $fullyBooked;
 });
+
 Route::get('leave','LeaveController@index');
 Route::post('save',array('as'=>'leave.create','uses'=> 'LeaveController@create'));
 Route::post('agentSave',array('as'=>'agent.create','uses'=> 'AgentController@create'));
+Route::post('change_pass',array('as'=>'change_pass','uses'=> 'AgentController@change_pass'));
 

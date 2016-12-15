@@ -13,15 +13,25 @@
 	<link rel="stylesheet" type="text/css" href="assets/themes/default/easyui.css">
 	<link rel="stylesheet" type="text/css" href="assets/themes/icon.css">
 	<link rel="stylesheet" type="text/css" href="assets/themes/color.css">
-	<script type="text/javascript" src="assets/jquery.min.js"></script>
-	<script type="text/javascript" src="assets/jquery.easyui.min.js"></script>
-    <script type="text/javascript" src="assets/datagrid-detailview.js"></script>
-    <script type="text/javascript" src="assets/datagrid-groupview.js"></script>
-    <script type="text/javascript" src="assets/datagrid-filter.js"></script>
     <style type="text/css">
+	.loader {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url('assets/images/gears.svg') 50% 50% no-repeat rgb(249,249,249);
+}
     </style>
+	<script type="text/javascript" src="assets/jquery.min.js"></script>
+<script type="text/javascript" src="assets/jquery.easyui.min.js"></script>
+  <script type="text/javascript" src="assets/datagrid-detailview.min.js"></script>
+  <script type="text/javascript" src="assets/datagrid-groupview.min.js"></script>
+   <script type="text/javascript" src="assets/datagrid-filter.min.js"></script>
 </head>
 <body id="bdy">
+<div class="loader">Loading......</div>
 	<div style="margin:20px 0;"></div>
 	<div id="leave-app">
         {{--layout start--}}
@@ -35,6 +45,7 @@
                                                 <tr><td>
                                                 <label for="agentCombo">Project Name</label></td><td>
                                                 <input class="easyui-textbox" value="{{$project}}" disabled required name="project"></td>
+                                                <input type="hidden" value="{{$max_agents}}" id="max_agents"></td>
                                                 </tr>
                                                     <tr><td><br><br></td></tr>
                                                 <tr><td>
@@ -52,7 +63,7 @@
                         						<a href="logout" style="padding: 5px;" class="easyui-linkbutton c2" data-options="iconCls:'icon-remove'">logout</a>
                         						</div>
                                                {{--EOF calender--}}
-                                                {{Form::close()}}
+                                                {{Form::close()}} 
                     </div>
                     {{--EOF panel--}}
         		</div>
@@ -69,7 +80,8 @@
         	</div>
         {{--EOF layout--}}
 	</div>
-<script src="assets/ui/mainui.js"></script>
-<script src="assets/app.js"></script>
+<script src="assets/ui/functions.min.js"></script>
+<script src="assets/ui/mainui.min.js"></script>
+<script src="assets/app.min.js"></script>
 </body>
 </html>

@@ -81,9 +81,54 @@ class AgentController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
+	public function change_pass()
 	{
-		//
+		if(Session::token() ==Input::get('_token')){
+                    $response=array(
+                        'status'=>'fail',
+                        'msg'=>'unauthorized Action'
+                    );
+        }
+        try
+               	{
+                       $email      =Input::get('agentId');
+                       $password   =Input::get('password');
+                $user =  Sentry::findUserByLogin($email);
+                          	// Create the user
+                         $user -> password = $password;
+                 if ($user->save())
+						{
+							$response=array(
+                           'status'=>'success',
+                           'msg'=>'User Successfully Created!!'
+                       );
+						}
+				else
+					{
+							$response=array(
+                           'status'=>'fail',
+                           'msg'=>'error!!'
+                       );
+					}
+               
+               	}
+               
+			catch (Cartalyst\Sentry\Users\UserExistsException $e)
+				{
+					$response=array(
+                           'status'=>'Error',
+                           'msg'=>'User with this login already exists..'
+                       );
+				}
+			catch (Cartalyst\Sentry\Users\UserNotFoundException $e)
+				{
+					$response=array(
+                           'status'=>'Error',
+                           'msg'=>'Agent ID '. $email .' Not Found'
+                       );
+				}
+
+               return Response::json($response);
 	}
 
 
