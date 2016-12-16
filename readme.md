@@ -1,13 +1,11 @@
-## Leave Appliction Ststem
+## Leave Application System
 
-Intended for leave application only.
-manages the number of people on leave in a particlar day.
+Intended for leave application only. 
+Manages the number of people on leave in a particular day.
 
 ## Technologies Used
 
-UI ==>built using javascript (jeasyui framework) 
-
+UI ==>built using JavaScript (Jeasyui framework)
 Backend ==> Laravel PHP Framework
-
 
 
