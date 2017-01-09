@@ -90,6 +90,7 @@ $('#leave-app').window({
                 return 'background-color:rgba(21, 21, 21, 0.04);color:#000;opacity:0.4;font-weight:bold;';
             }
         },
+	  /*enable delete leave button*/
         onClickRow: function (index,row) {
             var now=new Date();
                        var y = now.getFullYear();
@@ -102,7 +103,8 @@ $('#leave-app').window({
 
             }
     });
-	 cal_refresh();
+	/*refresh claender after every 15 sec */ 
+	cal_refresh();
 	  
     function actionsFormat(value,row,index){
         var now=new Date();
