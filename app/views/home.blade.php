@@ -80,7 +80,7 @@
         	</div>
         {{--EOF layout--}}
 	</div>
-<script src="assets/ui/functions.min.js"></script>
+<script src="assets/ui/functions.js"></script>
 <script src="assets/ui/mainui.min.js"></script>
 <script src="assets/app.min.js"></script>
 </body>

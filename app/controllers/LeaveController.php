@@ -1,5 +1,5 @@
 <?php
-
+use Carbon\Carbon;
 class LeaveController extends \BaseController {
 
 	/**
@@ -12,16 +12,16 @@ class LeaveController extends \BaseController {
 		if(Sentry::check()){
         $user= Sentry::getUser();
         $project=$user->project_ID;
+		$now = Carbon::now()->year;
     }
         $leave=  DB::table('leave')
             ->join('users', 'leave.agent_ID', '=', 'users.agent_ID')
             ->join('Projects', 'users.project_ID', '=', 'Projects.Project_Name')
             ->select('leave.leave_ID','leave.date', 'leave.agent_ID', 'users.agent_Name','users.created_at','Projects.project_Name')
 			->where('project_Name','=',$project)
+			->where('date','like',$now.'%')
             ->orderBy('agent_Name', 'asc')
             ->get();
-
-
       /*  $leave = DB::table('Agent')->leave
             ->orderBy('date', 'desc')
             ->get();*/
@@ -46,6 +46,7 @@ class LeaveController extends \BaseController {
 			 if(Sentry::check()){
              $user= Sentry::getUser();
             $project=$user->project_ID;
+			$now = Carbon::now()->year;
 			}
             $month=Input::get('qter');
             if($month<=3 && $month>=1){
@@ -70,7 +71,7 @@ class LeaveController extends \BaseController {
 			->count();
             $agent=Leave::where('date', '=',Input::get('date'))->where('agent_ID', '=',Input::get('agent'))->count();
             $monthMax=Leave::where('date', 'like',Input::get('month').'%')->where('agent_ID', '=',Input::get('agent'))->count();
-            $maxLeave=Leave::where('agent_ID', '=',Input::get('agent'))->count();
+            $maxLeave=Leave::where('agent_ID', '=',Input::get('agent'))->where('date','like',$now.'%')->count();
            
 				foreach ($max_agents as $max_a)
 				{
